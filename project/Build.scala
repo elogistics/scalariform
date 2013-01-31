@@ -12,13 +12,11 @@ object ScalariformBuild extends Build {
 
   lazy val commonSettings = Defaults.defaultSettings ++ ScalariformPlugin.defaultScalariformSettings ++ Seq(
     organization := "org.scalariform",
-    version := "0.1.4-SNAPSHOT",
+    version := "0.1.4-ELOG-SNAPSHOT",
     scalaVersion := "2.9.2",
     crossScalaVersions := Seq(
-      "2.10.0-M7",
-      "2.9.2", "2.9.1-1", "2.9.1", "2.9.0-1", "2.9.0",
-      "2.8.2", "2.8.1", "2.8.0"
-    ),
+      "2.10.0",
+      "2.9.2", "2.9.1-1", "2.9.1"),
     exportJars := true, // Needed for cli oneJar
     retrieveManaged := true,
     scalacOptions += "-deprecation",
@@ -33,11 +31,11 @@ object ScalariformBuild extends Build {
 
   lazy val root: Project = Project("root", file("."), settings = commonSettings ++ Seq(
     publish := (),
-    publishLocal := ())) aggregate (scalariform, cli, misc)
+    publishLocal := ())) aggregate (scalariform)
 
   def getScalaTestDependency(scalaVersion: String) = scalaVersion match {
     case "2.8.0"     ⇒ "org.scalatest" %% "scalatest" % "1.3.1.RC2" % "test"
-    case "2.10.0-M7" ⇒ "org.scalatest" %  "scalatest_2.10.0-M7" % "1.9-2.10.0-M7-B1" % "test"
+    case "2.10.0" ⇒ "org.scalatest" %% "scalatest" % "1.9" % "test"
     case _           ⇒ "org.scalatest" %% "scalatest" % "1.7.2" % "test"
   }
 
@@ -56,7 +54,7 @@ object ScalariformBuild extends Build {
         publishTo <<= isSnapshot(getPublishToRepo)))
 
   def getPublishToRepo(isSnapshot: Boolean) =
-    if (isSnapshot) Some("snapshots" at "https://oss.sonatype.org/content/repositories/snapshots")
+    if (isSnapshot) Some("snapshots" at "http://artifactory.elogistics.net/artifactory/third-party-snapshots")
     else Some("releases" at "https://oss.sonatype.org/service/local/staging/deploy/maven2")
 
   lazy val cli = Project("cli", file("cli"), settings = subprojectSettings ++ SbtOneJar.oneJarSettings ++
